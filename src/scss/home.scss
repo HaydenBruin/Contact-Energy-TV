@@ -2,10 +2,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 300vh;
 
     .column {
         flex: 1 0 50%;
+
+        svg {
+            width: 100vh;
+            height: 300vh;
+
+            .land
+			{
+				fill: #FFFFFF;
+				fill-opacity: 1;
+				stroke:#ccc;
+				stroke-opacity: 1;
+                stroke-width:0.5;
+                
+                &:hover {
+                    fill: #ff9900;
+                }
+			}
+        }
 
         h1, h2 {
             color: #FFF;
