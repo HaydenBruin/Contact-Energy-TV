@@ -2,25 +2,30 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 300vh;
+    height: 100vh;
 
     .column {
         flex: 1 0 50%;
 
         svg {
-            width: 100vh;
-            height: 300vh;
+            width: 100%;
+            height: 900px;
+            margin-top: -250px;
+            transition: all 3 ease;
 
-            .land
-			{
+            .land {
 				fill: #FFFFFF;
 				fill-opacity: 1;
 				stroke:#ccc;
 				stroke-opacity: 1;
-                stroke-width:0.5;
+                stroke-width: 0.5;
                 
-                &:hover {
-                    fill: #ff9900;
+                &:hover,
+                &.active {
+                    fill: #DD353F;
+                }
+                &.active::after {
+                    content: ' ';
                 }
 			}
         }
@@ -42,4 +47,30 @@
             
         }
     }
+}
+
+.simulate {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0,0,0,0.5);
+    color: #FFF;
+    padding: 10px;
+
+    &:hover {
+        background: rgba(0,0,0,1);
+        cursor: pointer;
+    }
+}
+
+.toaster {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    text-align: center;
+    color: #FFF;
+    padding: 10px;
+    width: 300px;
 }
