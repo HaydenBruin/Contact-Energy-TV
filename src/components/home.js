@@ -7,6 +7,7 @@ class Home extends Component {
 
     state = {
         weeklyJoins: 396,
+        startedSimulation: false,
         joinSimulation: 0
     }
 
@@ -24,26 +25,52 @@ class Home extends Component {
         {
             id: 3,
             name: "Scott IceCream",
-            region: "NZ-AUK"
+            region: "NZ-CAN"
         },
         {
             id: 4,
             name: "Betty Burger",
             region: "NZ-BOP"
+        },
+        {
+            id: 5,
+            name: "Scott IceCream",
+            region: "NZ-MWT"
+        },
+        {
+            id: 6,
+            name: "Betty Burger",
+            region: "NZ-MWT"
+        },
+        {
+            id: 7,
+            name: "Betty Burger",
+            region: "NZ-MBH"
+        },
+        {
+            id: 8,
+            name: "Betty Burger",
+            region: "NZ-HKB"
         }
-
+        
     ]
 
-    SimulateJoins = () => {
+    FinishSimulation = () => {
+        clearTimeout(this.simulateTimer);
+        this.setState({
+            joinSimulation: 0,
+            startedSimulation: false
+        })
+    }
+
+    StartSimulation = () => {
         // reset simulation state
         this.setState({
-            joinSimulation: 0
+            joinSimulation: 0,
+            startedSimulation: true
         })
 
         this.simulateTimer = setInterval(() => {
-            // debugging
-            console.log('simulating join');
-            console.log(this.joinQueue[this.state.joinSimulation]);
 
             // RESET ACTIVE
             document.querySelectorAll('.land').forEach((element) => {
@@ -54,15 +81,34 @@ class Home extends Component {
             let joinedUser = this.joinQueue[this.state.joinSimulation];
             if(joinedUser)
             {
+                // CLONE TEMPLATE
+                let template = document.querySelector('.join-template').innerHTML;
+                let element = document.createElement('div');
+                document.querySelector('.joins').appendChild(element).innerHTML = template;
+
                 document.querySelector('#' + joinedUser.region).classList.add('active');
+                const newjoin = document.querySelector('#' + joinedUser.region).getBoundingClientRect();
+                element.querySelector('.join').style.top = newjoin.top + 'px';
+                element.querySelector('.join').style.left = newjoin.left + 'px';
+                element.querySelector('.join').style.height = newjoin.height + 'px';
+                element.querySelector('.join').style.width = newjoin.width + 'px';
                 this.setState({
                     joinSimulation: this.state.joinSimulation + 1,
                     weeklyJoins: this.state.weeklyJoins + 1
                 })
+
+                setTimeout(() => {
+                    let el = element.classList.add('fade-out');
+                    setTimeout(() => {
+                        element.remove();
+                    },2000)
+                },8000)
             }
             else // join simulation finished
             {
-                clearTimeout(this.simulateTimer);
+                this.setState({
+                    joinSimulation: 0
+                })
             }
         },2000)
     }
@@ -70,12 +116,17 @@ class Home extends Component {
     render() {
         return (
             <Fragment>
-                <div className="simulate" onClick={() => this.SimulateJoins()}>Simulate Joins</div>
+                {!this.state.startedSimulation && <div className="simulate" onClick={() => this.StartSimulation()}>Simulate Joins</div>}
+                {this.state.startedSimulation && <div className="simulate" onClick={() => this.FinishSimulation()}>End Simulation</div>}
                 <div className="home">
                     <div className="column">
                         <h1>{this.state.weeklyJoins} Sign ups</h1>
                     </div>   
                     <div className="column">
+                        <div className="join-template">
+                            <div className="join"><div className="pulse"></div></div>
+                        </div>
+                        <div className="joins"></div>
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1"  x="0" y="0">
                             <g>
                                 <path id="NZ-AUK" title="Auckland" className="land" d="M363.36,352.48l1.04,-0.08l-0.69,0.82l0.41,1.36l-0.51,1.07l-1.66,-1.94l0.92,-0.08l-0.11,-1.2L363.36,352.48zM362.66,348.24l0.89,0.08l0.42,0.66l-0.41,0.71l-0.5,-0.28l-1,0.67l0.46,1.46l-0.87,1.5h-0.68l-0.55,-0.03l-0.59,-0.31l-1.01,-0.21l-0.48,-0.36l0.35,-0.51l-1.4,-0.04l0.37,-0.59l-1.06,-0.77l-1.06,1.04l-0.05,-1.98l1.13,-0.2l0.09,0.84l1.68,-0.91l0.29,0.98l1.23,0.03l0.23,-1.08l1.64,0.06L362.66,348.24zM352.74,347.26l0.76,0.58l-0.25,2.1l-0.64,0.65l-0.42,-0.6l-0.48,0.83l-1.97,0.14l-0.49,-0.82l0.44,-0.94l2.02,-0.07l1,-1.04L352.74,347.26zM349.79,330.94l1.48,1.16l-0.18,1.92l-0.41,-0.67l-1.19,0.45l0.22,-0.4l-0.92,-0.56L349.79,330.94zM359.67,320.25l0.88,0.64l-0.65,2.39l-1.94,-0.57l0.05,-1.68L359.67,320.25zM341.8,319.09l3.26,4.8l4,1.46l-0.03,0.72l-1.01,0.64l0.2,0.85l-0.63,-0.04l-0.19,0.03l0.39,1.45l0.63,-0.17l1.33,1.08l1.14,-0.2l-0.84,0.73l-0.97,-0.2l-1.24,0.65l-1.84,0.35l-0.52,-0.48l0.09,1.74l0.69,0.68l1.2,-0.05l-0.12,0.37l-1.24,1.44l-0.75,0.92l0.2,-1.98l-0.7,-0.38l-0.48,1.02l-0.53,0.77l1.24,0.66l0.15,2.4l-0.88,-0.26l0.41,1.08l-0.6,0.03l-0.13,0.63l1.57,2.27l1.27,0.18l0.32,-0.96l2.55,-0.67l-0.19,1.31l-2.37,0.23l-0.54,0.85l-1.24,0.2l1.4,2.42l-0.54,0.93l1.01,3.51l1.46,2.04l-1.3,-0.13l0.52,-0.42l-1.11,-0.95l-0.95,0.9l-1.66,0.34l-1.38,-2.51l0.53,-1.05l-1.23,1.18l0.01,0.6l0.11,0.95l0.44,0.45l-0.09,1.82l1.38,1.4l0.46,-1.52l0.89,0.09l0.65,-0.9l1.66,0.28l0.23,1.03l0.62,0.12l0.44,-0.88l2.21,0.03l0.53,1.21l-1.14,1.84l1.81,-1.62l0.37,-0.08l1.87,1.87l1.16,-0.19l-0.3,-1.32l2.1,-0.35l1.25,1.49l0.41,0.41l0.94,1.57l1.47,-0.89l0.69,1.12l1.22,-1l2.25,1.33l1.36,2.22l0,0l-0.45,1.06l-2.59,0.74l-1.33,-1.09l-0.76,0.28l-0.07,1.88l-2.73,-0.31l-0.55,-0.86l-1.73,2.22l-0.81,2.68l-1.29,-0.05l-0.8,-0.77l-0.49,0.71l0.29,0.96l0.38,-0.4l0.94,0.98l0.97,2.03l-0.73,1.33l-2.34,-0.2l0.54,0.86l-0.63,0.5l-0.09,1.36l-2.61,-0.64l-0.09,1.36l-1.61,0.96l0,0l-1.89,1l-0.24,-0.43l-0.51,0.51l0.15,1.18l-0.65,0.57l-1.58,-1.47l-5.77,-13.3l-0.02,-1.26l0.98,-0.43l1.68,0.31l0.8,-0.64l1.24,0.4l0.23,1.21l-0.61,0.81l0.77,1.02l-0.27,1.62l1.09,0.38l0.74,4.16l1.08,0.2l-1.28,-3.88l0.9,0.35l0.83,0.23l1.72,-0.27l-3.39,-0.58l-0.61,-0.71l1.97,-0.58l1.39,-1.79l0.71,0.13l-0.14,0.92l2.39,-2.63l1,0.6l0.73,-0.37l0.21,0.76l1.09,-0.89l-0.94,-0.69l-0.69,0.72l-0.58,-0.17l-0.57,-0.2l-1.64,-1.99l-1.97,0.43l0.32,-0.49l-1.24,-0.8l1.29,-1.16l-0.72,-1.36l1.3,-0.27l1.11,0.67l0.44,-0.73l-1.51,-0.26l-0.71,-0.19l-1.65,0.71l-0.91,-0.61l-0.99,0.37l-1.88,2.19l-0.54,-0.33l-0.62,1.4l0.32,0.94l-1.49,-0.47l-0.25,-0.57l-0.38,1.1l-1.78,1.3l-1,0.06l-0.74,-4.9l-1.49,-3.39l-0.47,-3.38l-5,-8.68l-4.92,-7.06l0.27,-1.73l1.26,-0.66l1.34,-0.32l2.6,4.8l2.93,1.79l-0.48,1.78l0.43,0.23l1.04,0.96l1.28,-0.74l0.17,-0.65l-1.23,-0.62l0.44,-0.99l0.93,-0.43l-1.48,-3.78l0.87,-2.79l-1.4,-1.3l-0.33,0.68l-1.04,0.28l-1.24,-1.32l-0.43,0.49l-1.35,-0.11l-1.13,-0.74l0.64,-3.13l0.6,-0.37l2.3,1.06l2,-0.81l0.25,-1.03l0,0l2.15,-1.76l0.54,0.38l0.39,-1.41l2.02,-0.75l0.12,-1.34l2,-0.76l0.1,-1.34l1.32,-1.02l0,0L341.8,319.09zM371.56,314.67l0.64,0.44l-0.35,1.48l0.64,-0.37l0.13,0.99l0.8,0.08l-0.82,0.48l0.15,1.1l0.34,0.07l2.66,1.48l-0.85,0.94l0.14,1.56l-0.68,0.33l0.8,1.59l0.74,-0.01l1.33,1.38l0.29,1.08l-1.08,1.67l-1.97,-0.87l0.22,-0.63l0.58,0.15l-0.24,-0.96l-1.09,0.55l-1.06,-0.2l0.24,-2.31l-1.45,0.38l-0.27,-0.78l-0.55,0.07l-1.88,-1.55l-0.5,0.68l-0.4,-1.12l-0.03,-1.28l0.71,0.13l0.42,0.86l0.83,0.01l-0.45,-1l0.18,-0.81l-0.49,-0.52l0.62,-0.39l-1.78,-0.56l0.19,-0.67l0.52,0.47l1.84,-0.69l-1.37,-1.16l0.07,-1.25L371.56,314.67z"/>
